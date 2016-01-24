@@ -11,10 +11,12 @@
 #include <uart.h>
 #include <p24HJ12GP201.h>
 #include <peripheralversion.h>
-
 #include "Globals.h"
-/*
- */
+
+// Definitions
+#define redLED LATAbits.LATA4
+#define off 0
+#define on 1
 
  	//Boot Loader OPTIONS
  	_FBS( BSS_NO_BOOT_CODE  & BWRP_WRPROTECT_OFF )
@@ -38,10 +40,13 @@ int main(int argc, char** argv) {
     Foo = 12;
     
     SetupUART1();
-#define redLED LATAbits.LATA4
+
     //printf("Hello world\r\n");
+    
     TRISAbits.TRISA4 = 0;
-    redLED = 1;
+    
+    redLED = on;
+    
     while(1);
     return (EXIT_SUCCESS);
 }
