@@ -12,7 +12,12 @@
 extern "C" {
 #endif
 
-extern void SetupUART(void);
+#define __FOSC_                 40000000
+#define __FTCY_                 (__FOSC_/2)
+#define __U1BAUD_               115200
+#define __BAUDUART1_            ((__FTCY_/(16*__U1BAUD_))-1)
+    
+extern void SetupUART1(void);
 
 
 #ifdef	__cplusplus
