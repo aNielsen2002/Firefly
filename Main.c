@@ -38,9 +38,11 @@ int main(int argc, char** argv) {
     Foo = 12;
     
     SetupUART1();
-    
-    printf("Hello world\r\n");
-    
+#define redLED LATAbits.LATA4
+    //printf("Hello world\r\n");
+    TRISAbits.TRISA4 = 0;
+    redLED = 1;
+    while(1);
     return (EXIT_SUCCESS);
 }
 
