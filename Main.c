@@ -34,7 +34,7 @@
 void SetupClock(void);
 int main(int argc, char** argv) {
     volatile int Foo;
-    
+    int LightLevel;
     SetupClock();
     
     Foo = 12;
@@ -47,6 +47,22 @@ int main(int argc, char** argv) {
     
     redLED = on;
     
+    
+    
+    while(1)
+    {
+        
+        redLED = on;
+        PauseBasic();
+        redLED = off;
+        LightLevel = ReadLightLevel();
+        if (LightLevel > 512 )
+        {
+            Pause1();
+        }
+        PauseBasic();
+        
+    }
     while(1);
     return (EXIT_SUCCESS);
 }
@@ -64,3 +80,18 @@ inline void SetupClock(void)
 	// Wait for PLL to lock
 	while(OSCCONbits.LOCK != 1) {}//
 }			//Check
+void PauseBasic()
+{
+    /* Delay for x milliseconds */
+    return;
+}
+void Pause1()
+{
+    /* Delay for x milliseconds */
+    return;
+}
+int ReadLightLevel()
+{
+    /* Look for Light Level */
+    return(0);
+}
