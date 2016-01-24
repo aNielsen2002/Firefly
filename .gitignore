@@ -1,0 +1,8 @@
+#MPLABX
+*.o
+*.o.d
+*.cof
+*.map
+*.mk
+*.bash
+*genesis.properties
