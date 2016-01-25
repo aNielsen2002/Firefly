@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
    // redLED = on;
     
     
-    Timer1Setup(0xFFFF);
+    Timer1Setup(5020);
     while(1)
     {      
          redLED = on;
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
         PauseBasic();
         redLED = off;
         LightLevel = ReadLightLevel();
-        if (LightLevel > 512 )
+        if (LightLevel > 248 )
         {
             Pause1();
         }
@@ -89,12 +89,14 @@ void PauseBasic()
 {
     /* Delay for x milliseconds */
     FLAGS = 0;
-    while(FLAGS < 12);
+    while(FLAGS < 1);
     return;
 }
 void Pause1()
 {
     /* Delay for x milliseconds */
+    FLAGS = 0;
+    while(FLAGS < 1);
     return;
 }
 int ReadLightLevel()
