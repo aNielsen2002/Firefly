@@ -11,7 +11,9 @@
 #include <uart.h>
 #include <p24HJ12GP201.h>
 #include <peripheralversion.h>
+#include <timer.h>
 #include "Globals.h"
+
 
 // Definitions
 #define redLED LATAbits.LATA4
@@ -31,6 +33,8 @@
 	//Watchdog is off
 	_FWDT( FWDTEN_OFF);
 
+    int FLAGS;
+    void Timer1Setup(unsigned int pr1);
 void SetupClock(void);
 int main(int argc, char** argv) {
     volatile int Foo;
@@ -39,28 +43,32 @@ int main(int argc, char** argv) {
     
     Foo = 12;
     
-    SetupUART1();
+  //  SetupUART1();
 
     //printf("Hello world\r\n");
     
     TRISAbits.TRISA4 = 0;
     
-    redLED = on;
+   // redLED = on;
     
     
-    
+    Timer1Setup(0xFFFF);
     while(1)
     {
         
-        redLED = on;
-        PauseBasic();
-        redLED = off;
-        LightLevel = ReadLightLevel();
-        if (LightLevel > 512 )
+        if(FLAGS > 12)
         {
-            Pause1();
+            redLED ^= 1;
+            FLAGS = 0;
         }
-        PauseBasic();
+        //PauseBasic();
+        //redLED = off;
+//        LightLevel = ReadLightLevel();
+//        if (LightLevel > 512 )
+//        {
+//            Pause1();
+//        }
+        //PauseBasic();
         
     }
     while(1);
@@ -83,6 +91,8 @@ inline void SetupClock(void)
 void PauseBasic()
 {
     /* Delay for x milliseconds */
+    FLAGS = 0;
+    while(FLAGS < 12);
     return;
 }
 void Pause1()
@@ -94,4 +104,31 @@ int ReadLightLevel()
 {
     /* Look for Light Level */
     return(0);
+}
+void __attribute__((__interrupt__,__auto_psv__)) _T1Interrupt(void)
+ { 
+    IFS0bits.T1IF = 0; /* clear interrupt flag */
+    FLAGS++;
+    return;
+ }
+inline void Timer1Setup(unsigned int pr1)
+{
+    OpenTimer1(
+            T1_ON &
+            T1_IDLE_CON &
+            T1_GATE_OFF &
+            T1_PS_1_8 &
+            T1_SYNC_EXT_OFF &
+            T1_SOURCE_INT,
+            pr1);
+    
+   
+    ConfigIntTimer1(
+            T1_INT_PRIOR_1 &
+            T1_INT_ON
+                    );
+    
+    _T1IF = 0;  //Clear Interrupt Flag
+
+    //printf("Timer 1 setup\r\n");
 }

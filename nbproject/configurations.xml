@@ -23,8 +23,9 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../../../../Program Files (x86)/Microchip/xc16/v1.25/support/peripheral_30F_24H_33F</Elem>
-    <Elem>.</Elem>
+    <Elem>C:/Program Files (x86)/Microchip/xc16/v1.25/support/peripheral_30F_24H_33F</Elem>
+    <Elem>C:/Program Files (x86)/Microchip/xc16/v1.25/support/PIC24H</Elem>
+    <Elem>C:/Program Files (x86)/Microchip/xc16/v1.25/support/generic</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
