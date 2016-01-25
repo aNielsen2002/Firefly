@@ -54,21 +54,18 @@ int main(int argc, char** argv) {
     
     Timer1Setup(0xFFFF);
     while(1)
-    {
+    {      
+         redLED = on;
         
-        if(FLAGS > 12)
+        
+        PauseBasic();
+        redLED = off;
+        LightLevel = ReadLightLevel();
+        if (LightLevel > 512 )
         {
-            redLED ^= 1;
-            FLAGS = 0;
+            Pause1();
         }
-        //PauseBasic();
-        //redLED = off;
-//        LightLevel = ReadLightLevel();
-//        if (LightLevel > 512 )
-//        {
-//            Pause1();
-//        }
-        //PauseBasic();
+        PauseBasic();
         
     }
     while(1);
