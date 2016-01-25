@@ -18,9 +18,10 @@ extern "C" {
 #define __BAUDUART1_            ((__FTCY_/(16*__U1BAUD_))-1)
     
 extern void SetupUART1(void);
-extern void PauseBasic(void);
+extern void PauseBasic(unsigned int);
 extern void Pause1(void);
 extern int ReadLightLevel(void);
+extern void SetupADC(void);
 #ifdef	__cplusplus
 }
 #endif

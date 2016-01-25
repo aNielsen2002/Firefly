@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   //  SetupUART1();
 
     //printf("Hello world\r\n");
-    
+    SetupADC();
     TRISAbits.TRISA4 = 0;
     
    // redLED = on;
@@ -58,14 +58,19 @@ int main(int argc, char** argv) {
          redLED = on;
         
         
-        PauseBasic();
+        PauseBasic(500);
         redLED = off;
-        LightLevel = ReadLightLevel();
-        if (LightLevel > 248 )
+        AD1CON1bits.SAMP = 1;	//START a2d processes
+        
+        while(AD1CON1bits.DONE != 1);	//START a2d processes
+        
+            LightLevel = ADC1BUF0;	//Grab data
+        
+        if (LightLevel > 30 )
         {
-            Pause1();
+            PauseBasic(250);
         }
-        PauseBasic();
+        PauseBasic(500);
         
     }
     while(1);
@@ -85,11 +90,11 @@ inline void SetupClock(void)
 	// Wait for PLL to lock
 	while(OSCCONbits.LOCK != 1) {}//
 }			//Check
-void PauseBasic()
+void PauseBasic(unsigned int Delay)
 {
     /* Delay for x milliseconds */
     FLAGS = 0;
-    while(FLAGS < 1);
+    while(FLAGS < Delay);
     return;
 }
 void Pause1()
