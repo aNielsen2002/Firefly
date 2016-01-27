@@ -1,6 +1,6 @@
 /* 
  * File:   Main.c
- * Author: Shana Nielsen
+ * Author: Aiden Nielsen
  *
  * Created on January 23, 2016, 9:03 PM
  */
@@ -20,39 +20,46 @@
 #define off 0
 #define on 1
 
- 	//Boot Loader OPTIONS
- 	_FBS( BSS_NO_BOOT_CODE  & BWRP_WRPROTECT_OFF )
-	//Code protect options
-	_FGS( GSS_OFF   & GCP_OFF & GWRP_OFF )
-	// Select Internal FRC at POR
-	_FOSCSEL(FNOSC_FRC & IESO_OFF);
-	// Enable Clock Switching and Configure
-	_FOSC(FCKSM_CSECMD & OSCIOFNC_OFF   );
-	//Gives time for the power to settle 
-	 _FPOR(FPWRT_PWR128 & ALTI2C_OFF);
-	//Watchdog is off
-	_FWDT( FWDTEN_OFF);
 
-    int FLAGS;
-    void Timer1Setup(unsigned int pr1);
+//Boot Loader OPTIONS
+_FBS( BSS_NO_BOOT_CODE  & BWRP_WRPROTECT_OFF )
+//Code protect options
+_FGS( GSS_OFF   & GCP_OFF & GWRP_OFF )
+// Select Internal FRC at POR
+_FOSCSEL(FNOSC_FRC & IESO_OFF);
+// Enable Clock Switching and Configure
+_FOSC(FCKSM_CSECMD & OSCIOFNC_OFF   );
+//Gives time for the power to settle 
+_FPOR(FPWRT_PWR128 & ALTI2C_OFF);
+//Watchdog is off
+_FWDT( FWDTEN_OFF);
+
+int FLAGS;
+int AmbLight;
+void Timer1Setup(unsigned int pr1);
 void SetupClock(void);
+int SetAmbient(void);
+
 int main(int argc, char** argv) {
     volatile int Foo;
     int LightLevel;
     SetupClock();
-    
-    Foo = 12;
-    
-  //  SetupUART1();
-
-    //printf("Hello world\r\n");
+    Timer1Setup(5020);
     SetupADC();
     TRISAbits.TRISA4 = 0;
+    SetAmbient();
+    Foo = 12;
+    
+    //SetupUART1();
+
+    //printf("Hello world\r\n");
+    
+    //TRISAbits.TRISA4 = 0;
     
    // redLED = on;
     
     
-    Timer1Setup(5020);
+    
     while(1)
     {      
          redLED = on;
@@ -66,7 +73,7 @@ int main(int argc, char** argv) {
         
             LightLevel = ADC1BUF0;	//Grab data
         
-        if (LightLevel > 30 )
+        if (LightLevel > AmbLight )
         {
             PauseBasic(250);
         }
@@ -75,6 +82,53 @@ int main(int argc, char** argv) {
     }
     while(1);
     return (EXIT_SUCCESS);
+}
+
+int SetAmbient(void)
+{
+    volatile int ReadLight_H;
+    volatile int ReadLight_L;
+    
+    
+    AD1CON1bits.SAMP = 1;	//START a2d processes
+    
+    while(AD1CON1bits.DONE != 1);	//START a2d processes
+        volatile int ReadLight = ADC1BUF0;	//Grab data
+        
+    ReadLight_H = ReadLight;
+    ReadLight_L = ReadLight;
+    int i;
+    for( i=0 ; i < 200 ; i++)   
+    {
+        AD1CON1bits.SAMP = 1;	//START a2d processes
+        while(AD1CON1bits.DONE != 1);	//START a2d processes
+        int ReadLight = ADC1BUF0;	//Grab data
+        
+        if(ReadLight < ReadLight_L)
+        {
+            ReadLight_L = ReadLight;
+        }
+        
+        if(ReadLight > ReadLight_H)
+        {
+            ReadLight_H = ReadLight;
+        }
+        
+    }
+    
+    AmbLight = (ReadLight_H+ReadLight_L)/2;
+    
+    int o;
+    for( o=0; o < 2; o++ )
+    {
+    redLED = on;
+    PauseBasic(500);
+    redLED = off;
+    PauseBasic(250);
+    }
+    PauseBasic(3000);
+    
+    return AmbLight;
 }
 
 inline void SetupClock(void)
